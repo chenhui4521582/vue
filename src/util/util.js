@@ -1,5 +1,4 @@
 class Util {
-  constructor() {}
   cookie() {
     return {
       get: function(name) {
