@@ -1,9 +1,11 @@
 let glob = require("glob");
 let path = require("path");
-let pagePath = path.resolve(__dirname, "./src/pages");
+let pagePath = path.resolve(__dirname, `./src/pages/*/*.html`);
+let bundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
+let targetName = process.argv.length > 3 ? process.argv[process.argv.length-1] || '' : ''
 let entry = function() {
-  let entryHtml = glob.sync(pagePath + "/*/*.html");
+  let entryHtml = glob.sync(pagePath);
   let entryMap = {};
   entryHtml.forEach(filePath => {
     let fileName = filePath.substring(
@@ -16,9 +18,14 @@ let entry = function() {
       fileName: fileName + ".html"
     };
   });
-  return entryMap;
+  if(targetName && entryMap[targetName]) {
+    let assignBuild = {}
+    assignBuild[targetName] = entryMap[targetName]
+    return assignBuild;
+  }else {
+    return entryMap;
+  }
 };
-
 const configureWebpack = {
   devServer: {
     open: true,
@@ -36,6 +43,7 @@ const configureWebpack = {
       "@util": "@/util"
     }
   },
+  plugins: [new bundleAnalyzerPlugin()],
   devtool: "cheap-module-eval-source-map"
 };
 

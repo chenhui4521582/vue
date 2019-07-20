@@ -31,16 +31,17 @@ export default {
       let startTime = new Date().getTime();
       let timer = "";
       if (timer) return false;
-      timer = requestAnimationFrame(function fn() {
-        let diffTime = new Date().getTime() - startTime;
-        fps++;
-        timer = requestAnimationFrame(fn);
-        if (diffTime >= 1000) {
-          _this.setFps(fps);
-          fps = 0;
-          startTime = new Date().getTime();
-        }
-      });
+      let fn = () => {
+		let diffTime = new Date().getTime() - startTime;
+		fps++;
+		timer = requestAnimationFrame(fn);
+		if (diffTime >= 1000) {
+		  _this.setFps(fps);
+		  fps = 0;
+		  startTime = new Date().getTime();
+		}
+      }
+      timer = requestAnimationFrame(fn);
     }
   },
   mounted() {
